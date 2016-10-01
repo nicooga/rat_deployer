@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.email         = ["2112.oga@gmail.com"]
   spec.summary       = %q{A micro-framework to deploy dockerized apps}
   spec.description   = %q{A micro-framework to deploy dockerized apps}
-  spec.homepage      = "TODO: Put your gem's website or public repo URL here."
+  spec.homepage      = "http://github.com/nicooga/rat_deployer"
   spec.license       = "MIT"
   spec.files         = %w(
     lib/rat_deployer.rb
