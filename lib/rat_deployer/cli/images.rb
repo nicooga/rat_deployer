@@ -10,8 +10,11 @@ module RatDeployer
 
       desc 'update [SERVICES...]', 'Update images for given services'
       def update(*services)
-        build(*services)
-        push(*services)
+        services.each do |svc|
+          put_heading "Updating image for service #{svc}"
+          do_build(svc)
+          do_push(svc)
+        end
       end
 
       desc 'build [SERVICES...]', 'Build images for given services'
@@ -27,7 +30,7 @@ module RatDeployer
       private
 
       def do_build(service)
-        put_heading "Building service #{service}"
+        put_heading "Building image for service #{service}"
 
         ensure_image_source(service)
 
@@ -35,6 +38,8 @@ module RatDeployer
       end
 
       def do_push(service)
+        put_heading "Pusinhg image for service #{service}"
+
         run "docker push #{image_name(service)}"
       end
 

@@ -34,7 +34,7 @@ module RatDeployer
       project_name = RatDeployer::Config.all.fetch('project_name')
 
       flags = [
-        "-f config/base.yml",
+        "-f config/default.yml",
         "-f config/#{env}.yml",
         "-p #{project_name}_#{env}"
       ].join(' ')
