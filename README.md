@@ -1,6 +1,6 @@
 # Rat
 
-Rat is deploy tool for docker users. It implements a facade around 3 docker CLIs:
+Rat is a deploy tool for docker users. It implements a facade around 3 docker CLIs:
   - docker
   - docker-compose
   - docker-machine
@@ -14,7 +14,7 @@ It is not very flexible and it is untested. I wrote this to avoid running a bunc
     $ gem install rat_deployer
 
 ## Usage
-Rat searchs for a file called `rat_config.yml` in the working dir. This file describes some global variables a environment specific variables.
+Rat searchs for a file called `rat_config.yml` in the working dir. This file describes some global variables and environment specific variables.
 
 Example config file:
 
