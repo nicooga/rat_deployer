@@ -9,6 +9,8 @@ It is not very flexible and it is untested. I wrote this to avoid running a bunc
 
 ![rat](http://mauveart.esy.es/img/rats/1_big.jpg)
 
+I named it rat because it is a rather little and ugly ball of code, but it does the job for now.
+
 ## Installation
 
     $ gem install rat_deployer
