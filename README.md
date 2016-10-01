@@ -2,7 +2,7 @@
 
 Rat is deploy tool for docker users. It implements a facade around 3 docker CLIs:
   - docker
-  - docker-machine
+  - docker-compose
   - docker-machine
   
 It is not very flexible and it is untested. I wrote this to avoid running a bunch of time consuming commands in a row.
