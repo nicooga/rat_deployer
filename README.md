@@ -5,7 +5,7 @@ Rat is a deploy tool for docker users. It implements a facade around 3 docker CL
   - docker-compose
   - docker-machine
   
-It is not very flexible and it is untested. I wrote this to avoid running a bunch of time consuming commands in a row.
+It is not very flexible and it is **untested**. I wrote this to avoid running a bunch of time consuming commands in a row.
 
 ![rat](http://mauveart.esy.es/img/rats/1_big.jpg)
 
@@ -53,7 +53,7 @@ This is what my dir structure looks like:
 
 ~~~bash
 ├── config # required
-│   ├── base.yml
+│   ├── default.yml
 │   ├── development.yml
 │   ├── production.yml
 │   └── staging.yml
