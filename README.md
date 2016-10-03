@@ -11,6 +11,9 @@ It is not very flexible and it is untested. I wrote this to avoid running a bunc
 
 I named it rat because it is a rather little and ugly ball of code, but it does the job for now.
 
+## Why need yet another CLI??
+My deploy process involves building and pushing a couple of images from my local computer, then connecting to the remote host, pulling the updated images and recreating the affected containers. This means running a bunch of commands that may take a lot of time to complete. I built rat to automate this process. 
+
 ## Installation
 
     $ gem install rat_deployer
@@ -21,30 +24,29 @@ Rat searchs for a file called `rat_config.yml` in the working dir. This file des
 Example config file:
 
 ~~~yaml
-project_name: my_app # Required
+project_name: myapp
+
+images:
+  'myapp/web:production':
+    source: web # The name of the folder inside ./sources
+    git:
+      url: git@gitlab.com:myapp_developers/myapp.git
+
+  'myapp/web:staging':
+    source: web
+    git:
+      url: git@gitlab.com:myapp_developers/myapp.git
+      branch: staging
+
+  'myapp/nginx':
+    source: nginx
 
 environments:
-  default: # base config, env specific configuration gets deep merged
-    images:
-      web:
-        git:
-          url: git@gitlab.com:my_app_developers/my_app.git
-      nginx:
-        name: my_app/nginx # Required
-
   production:
-    machine: my_app-production # Required
-    images:
-      web:
-        name: my_app/web:production # Required
-
+    machine: myapp-production
   staging:
-    machine: my_app-staging # Required
-    images:
-      web:
-        name: my_app/web:staging # Required
-        git:
-          branch: staging
+    machine: myapp-staging
+
 ~~~
 
 This is what my dir structure looks like:
@@ -65,34 +67,22 @@ This is what my dir structure looks like:
 └── rat_config.yml
 ~~~
 
-The rest is pretty much self-explanatory:
+Then to deploy:
 
 ~~~bash
-$ RAT_ENV=production rat deploy
-||=> Running command `eval $(docker-machine env --unset)`
-||=> Running command `rat images update web nginx`
-|| Building service web
-||=> Running command `git -C /home/nepto/Source/my_app_deploy/sources/web checkout -f staging`
-Already on 'staging'
-Your branch is up-to-date with 'origin/staging'.
-||=> Running command `git -C /home/nepto/Source/my_app_deploy/sources/web pull origin staging`
-From gitlab.com:my_app_developers/my_app
- * branch            staging    -> FETCH_HEAD
-Already up-to-date.
-||=> Running command `docker build /home/nepto/Source/my_app_deploy/sources/web -t my_app/web:staging`
-# ... output
-|| Building service nginx
-||=> Running command `docker build /home/nepto/Source/my_app_deploy/sources/nginx -t my_app/nginx`
-# ... output
-||=> Running command `docker push my_app/web:staging`
-# ... output
-||=> Running command `docker push my_app/nginx`
-# ... output
-||=> Running command `docker-compose -f config/base.yml -f config/staging.yml -p my_app_staging pull`
-# ... output
-||=> Running command `docker-compose -f config/base.yml -f config/staging.yml -p my_app_staging up -d`
-# ... output
+$ RAT_ENV=staging rat deploy # to rebuild all images for which config is found in rat_config.yml
+$ # or
+$ RAT_ENV=staging rat deploy myapp/web:staging  # for an specific image
 ~~~
+
+`rat deploy` will build and push the given images, connect to the remote machine, pull the new images, and recreate the affected containers. Other useful commands explained in the next section.
+
+## Commands
+  - `rat compose [CMD] [FLAGS...]`: simply runs given `docker-compose` command, but appends a couple of flags by convention: `-f config/default.yml -f config/$RAT_ENV.yml -p ${PROYECT_NAME}_$RAT_ENV`. This means you shoud put common docker-compose settings in config/default.yml and env specific config in config/<current_env>.yml.
+  - `rat images update [IMAGES...]`: alias for `rat images build [IMAGES...] && rat images push [IMAGES...]`
+  - `rat images build [IMAGES...]`: builds given images. If source for an image is not present in the path specified in the config, rat will try to clone if there is git sources configured.
+  - `rat images push [IMAGES...]`: pushes given images
+  - `rat deploy [IMAGES...]`: called with no arguments will `rat images update` all images and `rat compose pull && rat compose up -d` within the specified remote machine for the env. 
 
 ## Development
 
