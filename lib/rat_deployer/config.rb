@@ -11,16 +11,18 @@ module RatDeployer
       ENV.fetch('RAT_ENV')
     end
 
-    def self.for_env(e = env)
-      confs        = all.fetch('environments')
-      default_conf = confs['default'] || confs['base'] || {}
-      env_conf     = confs.fetch(e)
-
-      default_conf.deep_merge env_conf
+    def self.images
+      all.fetch('images', {})
     end
 
-    def self.for_service(service)
-      for_env.fetch('images').fetch(service)
+    def self.environmental
+      all.fetch('environments', {})
+    end
+
+    def self.for_env(e = env)
+      default_conf = environmental.fetch('default', {})
+      env_conf     = environmental.fetch(e)
+      default_conf.deep_merge(env_conf)
     end
   end
 end
