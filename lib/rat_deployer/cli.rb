@@ -23,8 +23,6 @@ module RatDeployer
 
     desc "compose ARGS...", "runs docker-compose command with default flags"
     def compose(cmd, *cmd_flags)
-      warn_if_running_on_remote_host
-
       env          = RatDeployer::Config.env
       project_name = RatDeployer::Config.all.fetch('project_name')
 
@@ -34,7 +32,9 @@ module RatDeployer
         "-p #{project_name}_#{env}"
       ].join(' ')
 
-      run "docker-compose #{flags} #{cmd} #{cmd_flags.join(" ")}"
+      within_machine do
+        run "docker-compose #{flags} #{cmd} #{cmd_flags.join(" ")}"
+      end
     end
 
     private
@@ -49,17 +49,17 @@ module RatDeployer
     end
 
     def within_machine(&block)
-      run "rat set_machine"
+      set_machine
       yield
     ensure
-      run "rat unset_machine"
+      unset_machine
     end
-    
-    def warn_if_running_on_remote_host
-      if machine = ENV["DOCKER_MACHINE"]
-        put_warning "Your docker client is pointing to the remote machine #{machine}"
-        ask_for_confirmation
-      end
-    end
+
+    #def warn_if_running_on_remote_host
+      #if machine = ENV["DOCKER_MACHINE"]
+        #put_warning "Your docker client is pointing to the remote machine #{machine}"
+        #ask_for_confirmation
+      #end
+    #end
   end
 end
