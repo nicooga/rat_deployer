@@ -9,7 +9,7 @@ module RatDeployer
         puts msg
       end
 
-      system cmd
+      exit 1 unless system(cmd)
     end
 
     def put_heading(str)
@@ -48,7 +48,7 @@ module RatDeployer
     end
 
     private
-    
+
     def prompt_enabled?
       ENV['RAT_PROMPT'] != "false"
     end

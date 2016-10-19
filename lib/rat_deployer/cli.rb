@@ -12,47 +12,31 @@ module RatDeployer
 
     desc "deploy", "deploys current environment"
     def deploy
-      unset_machine
       run "rat images update"
-
-      within_machine do
-        run "rat compose pull"
-        run "rat compose up -d"
-      end
+      run "rat compose pull"
+      run "rat compose up -d"
     end
 
     desc "compose ARGS...", "runs docker-compose command with default flags"
     def compose(cmd, *cmd_flags)
-      env          = RatDeployer::Config.env
-      project_name = RatDeployer::Config.all.fetch('project_name')
+      env           = RatDeployer::Config.env
+      project_name  = RatDeployer::Config.all.fetch('project_name')
 
       flags = [
         "-f config/default.yml",
         "-f config/#{env}.yml",
         "-p #{project_name}_#{env}"
-      ].join(' ')
+      ]
 
-      within_machine do
-        run "docker-compose #{flags} #{cmd} #{cmd_flags.join(" ")}"
-      end
+      flags.unshift(remote_machine_flags) if RatDeployer::Config.remote
+
+      run "docker-compose #{flags.join(' ')} #{cmd} #{cmd_flags.join(" ")}"
     end
 
     private
 
-    def set_machine
-      machine = RatDeployer::Config.for_env.fetch("machine")
-      run "eval $(docker-machine env #{machine})"
-    end
-
-    def unset_machine
-      run "eval $(docker-machine env --unset)"
-    end
-
-    def within_machine(&block)
-      set_machine
-      yield
-    ensure
-      unset_machine
+    def remote_machine_flags
+      `docker-machine config #{RatDeployer::Config.machine}`.gsub(/\n/, ' ')
     end
 
     #def warn_if_running_on_remote_host

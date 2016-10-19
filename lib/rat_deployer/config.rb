@@ -24,5 +24,14 @@ module RatDeployer
       env_conf     = environmental.fetch(e)
       default_conf.deep_merge(env_conf)
     end
+
+    def self.machine
+      for_env.fetch("machine")
+    end
+
+    def self.remote
+      env_var = ENV['RAT_REMOTE']
+      env_var.nil? ? true : env_var == 'true'
+    end
   end
 end
