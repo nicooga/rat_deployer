@@ -19,8 +19,8 @@ module RatDeployer
 
     desc "compose ARGS...", "runs docker-compose command with default flags"
     def compose(cmd, *cmd_flags)
-      env           = RatDeployer::Config.env
-      project_name  = RatDeployer::Config.all.fetch('project_name')
+      env          = RatDeployer::Config.env
+      project_name = RatDeployer::Config.all.fetch('project_name')
 
       flags = [
         "-f config/default.yml",
@@ -31,6 +31,17 @@ module RatDeployer
       flags.unshift(remote_machine_flags) if RatDeployer::Config.remote
 
       run "docker-compose #{flags.join(' ')} #{cmd} #{cmd_flags.join(" ")}"
+    end
+
+    desc "docker ARGS...", "runs docker command with default flags"
+    def docker(cmd, *cmd_flags)
+      env          = RatDeployer::Config.env
+      project_name = RatDeployer::Config.all.fetch('project_name')
+
+      flags = []
+      flags.unshift(remote_machine_flags) if RatDeployer::Config.remote
+
+      run "docker #{flags.join(' ')} #{cmd} #{cmd_flags.join(" ")}"
     end
 
     private
