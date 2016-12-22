@@ -1,3 +1,5 @@
 #!/usr/bin/env ruby
+require 'rat_deployer'
 require 'rat_deployer/cli'
+RatDeployer.print_rat
 RatDeployer::Cli.start(ARGV)

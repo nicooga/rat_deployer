@@ -15,7 +15,7 @@ module RatDeployer
           put_heading "Updating image #{image}"
 
           do_build(image)
-          do_push(image)
+          do_push(image) if RatDeployer::Config.remote
         end
       end
 
@@ -72,15 +72,14 @@ module RatDeployer
 
       def git_checkout(image)
         run "git -C #{source_path(image)} checkout -f #{git_branch(image)}"
-        run "git -C #{source_path(image)} reset --hard origin/#{git_branch(image)}"
       end
 
       def git_fetch(image)
-        run "git -C #{source_path(image)} fetch origin #{git_branch(image)}"
+        run "git -C #{source_path(image)} fetch --tags --all --prune"
       end
 
       def git_branch(image)
-        git_conf(image).fetch('branch', 'master')
+        git_conf(image).fetch('branch', 'origin/master')
       end
 
       def git_conf(image)
