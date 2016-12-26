@@ -19,6 +19,7 @@ Gem::Specification.new do |spec|
     lib/rat_deployer/command.rb
     lib/rat_deployer/config.rb
     lib/rat_deployer/version.rb
+    vendor/rat.txt
   )
   spec.executables   = ["rat"]
   spec.require_paths = ["lib"]

@@ -12,9 +12,9 @@ module RatDeployer
 
     desc "deploy", "deploys current environment"
     def deploy
-      invoke [RatDeployer::Cli::Images, :update]
-      invoke :compose, %w[pull]
-      invoke :compose, ["up -d"]
+      RatDeployer::Cli::Images.new.update
+      RatDeployer::Cli.new.compose('pull')
+      RatDeployer::Cli.new.compose('up -d')
     end
 
     desc "compose ARGS...", "runs docker-compose command with default flags"
