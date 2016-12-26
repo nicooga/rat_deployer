@@ -33,5 +33,9 @@ module RatDeployer
       env_var = ENV['RAT_REMOTE']
       env_var.nil? ? true : env_var == 'true'
     end
+
+    def self.prompt_enabled?
+      ENV['RAT_PROMPT'] != "false"
+    end
   end
 end

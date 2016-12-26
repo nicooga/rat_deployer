@@ -1,16 +1,22 @@
 require 'rat_deployer/version'
+require 'rat_deployer/config'
 
 module RatDeployer
   def self.print_rat
-    puts <<-RAT
+    return unless RatDeployer::Config.prompt_enabled?
 
-      (\,/)        DEPLOY RAT WORKING
-      oo   '''//,        _
-    ,/_;~,        \,    / '
-    "'   \    (    \    !
-          ',|  \    |__.'
-          '~  '~----''----''
+    rat = <<-RAT
+
+                   DEPLOY RAT
+    (\,/)          WORKING
+    oo   '''//,        _
+  ,/_;~,        \,    / '
+  "'   \    (    \    !
+        ',|  \    |__.'
+        '~  '~----''
 
     RAT
+
+    puts rat
   end
 end
