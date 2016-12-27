@@ -2,6 +2,7 @@ require 'thor'
 
 require 'rat_deployer/cli/images'
 require 'rat_deployer/command'
+require 'rat_deployer/notifier'
 
 module RatDeployer
   class Cli < Thor
@@ -12,14 +13,18 @@ module RatDeployer
 
     desc "deploy", "deploys current environment"
     def deploy
+      RatDeployer::Notifier.notify "Starting deploy on #{ENV.fetch('RAT_ENV')}"
+
       RatDeployer::Cli::Images.new.update
       RatDeployer::Cli.new.compose('pull')
       RatDeployer::Cli.new.compose('up -d')
+
+      RatDeployer::Notifier.notify "Ended deploy on #{ENV.fetch('RAT_ENV')}"
     end
 
     desc "compose ARGS...", "runs docker-compose command with default flags"
     def compose(cmd, *cmd_flags)
-      etnv          = RatDeployer::Config.env
+      env          = RatDeployer::Config.env
       project_name = RatDeployer::Config.all.fetch('project_name')
 
       flags = [
