@@ -25,6 +25,13 @@ module RatDeployer
       default_conf.deep_merge(env_conf)
     end
 
+    def self.prompt_enabled?
+      ENV['RAT_PROMPT'] != "false"
+    end
+
+    # Loads machine config for current env.
+    # Acceps either a docker-machine machine name
+    # or an object with keys ca_cert, cert, key, and host.
     def self.machine
       for_env.fetch("machine")
     end
@@ -34,8 +41,19 @@ module RatDeployer
       env_var.nil? ? true : env_var == 'true'
     end
 
-    def self.prompt_enabled?
-      ENV['RAT_PROMPT'] != "false"
+    def self.remote_machine_flags
+      case machine
+      when Symbol, String
+        `docker-machine config #{machine}`.gsub(/\n/, ' ')
+      when Hash
+        [
+          "--tlsverify",
+          "-H='#{machine.fetch('host')}'",
+          "--tlscacert='#{machine.fetch('ca_cert')}'",
+          "--tlscert='#{machine.fetch('cert')}'",
+          "--tlskey='#{machine.fetch('key')}'",
+        ].join(' ')
+      end
     end
   end
 end
