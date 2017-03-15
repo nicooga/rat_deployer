@@ -4,7 +4,7 @@ require 'deep_merge'
 module RatDeployer
   module Config
     def self.all
-      @all ||= YAML.load_file File.expand_path('./rat_config.yml')
+      @all ||= YAML.load_file(File.expand_path('./rat_config.yml')) || {}
     end
 
     def self.env

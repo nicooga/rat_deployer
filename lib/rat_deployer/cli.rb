@@ -1,6 +1,5 @@
 require 'thor'
 
-require 'rat_deployer/cli/images'
 require 'rat_deployer/command'
 require 'rat_deployer/notifier'
 
@@ -8,18 +7,20 @@ module RatDeployer
   class Cli < Thor
     include RatDeployer::Command
 
-    desc 'images SUBCOMMAND ...ARGS', 'manage images'
-    subcommand 'images', RatDeployer::Cli::Images
-
     desc "deploy", "deploys current environment"
     def deploy
-      RatDeployer::Notifier.notify "Starting deploy on #{ENV.fetch('RAT_ENV')}"
+      RatDeployer::Notifier.notify_deploy_start
 
-      RatDeployer::Cli::Images.new.update
       RatDeployer::Cli.new.compose('pull')
       RatDeployer::Cli.new.compose('up -d')
 
-      RatDeployer::Notifier.notify "Ended deploy on #{ENV.fetch('RAT_ENV')}"
+      RatDeployer::Notifier.notify_deploy_end
+    rescue Exception => e
+      RatDeployer::Notifier.notify <<-STR
+Failed deploy on #{ENV.fetch('RAT_ENV')}"
+Reason:
+  #{e.message}
+      STR
     end
 
     desc "compose ARGS...", "runs docker-compose command with default flags"

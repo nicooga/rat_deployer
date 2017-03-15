@@ -1,5 +1,6 @@
 require "colorize"
 require 'highline/import'
+require 'rat_deployer/config'
 
 module RatDeployer
   module Command
