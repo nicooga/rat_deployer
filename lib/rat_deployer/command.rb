@@ -4,13 +4,30 @@ require 'rat_deployer/config'
 
 module RatDeployer
   module Command
-    def run(cmd)
+    def run(cmd, silent: false)
       if RatDeployer::Config.prompt_enabled?
         msg = "||=> Running command ".colorize(:blue) + "`#{cmd.colorize(:white)}`"
         puts msg
       end
 
-      exit 1 unless system(cmd)
+      command = do_run(cmd, silent: silent)
+      exit 1 unless command.fetch(:status).zero?
+      command
+    end
+
+    def do_run(cmd, silent: false)
+      output, status = '', 1
+
+      IO.popen(cmd) do |io|
+        while line = io.gets do
+          puts line unless silent
+          output << line
+        end
+        io.close
+        status = $?.to_i
+      end
+
+      {output: output, status: status}
     end
 
     def put_heading(str)

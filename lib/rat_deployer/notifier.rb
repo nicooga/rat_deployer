@@ -19,7 +19,11 @@ module RatDeployer
         attachments: [{
           title:  title,
           fields: get_deploy_properties.map do |k,v|
-            {title: k.to_s.titleize, value: v, short: true}
+            {
+              title: k.to_s.titleize,
+              value: k == :images ? v.join(' · ') : v,
+              short: k != :images
+           }
           end
         }]
       )
@@ -50,11 +54,15 @@ module RatDeployer
     def self.get_deploy_properties
       require 'socket'
 
+      docker_config = YAML.load(RatDeployer::Cli.new.compose('config'))
+      images = docker_config['services'].map { |s,c| c['image'] }.uniq.sort
+
       {
         env:        ENV.fetch('RAT_ENV'),
         user:       ENV.fetch('USER'),
         hostname:   Socket.gethostname,
-        started_at: Time.now.to_s
+        started_at: Time.now.to_s,
+        images:     images
       }
     end
   end

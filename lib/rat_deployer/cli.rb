@@ -38,7 +38,8 @@ Reason:
         flags.unshift(RatDeployer::Config.remote_machine_flags)
       end
 
-      run "docker-compose #{flags.join(' ')} #{cmd} #{cmd_flags.join(" ")}"
+      cmd = run "docker-compose #{flags.join(' ')} #{cmd} #{cmd_flags.join(" ")}"
+      cmd.fetch(:output)
     end
 
     desc "docker ARGS...", "runs docker command with default flags"
@@ -52,7 +53,8 @@ Reason:
         flags.unshift(RatDeployer::Config.remote_machine_flags)
       end
 
-      run "docker #{flags.join(' ')} #{cmd} #{cmd_flags.join(" ")}"
+      cmd = run "docker #{flags.join(' ')} #{cmd} #{cmd_flags.join(" ")}"
+      cmd.fetch(:output)
     end
   end
 end
