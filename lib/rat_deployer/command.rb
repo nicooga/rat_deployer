@@ -5,7 +5,7 @@ require 'rat_deployer/config'
 module RatDeployer
   module Command
     def run(cmd, silent: false)
-      if RatDeployer::Config.prompt_enabled?
+      if !silent && RatDeployer::Config.prompt_enabled?
         msg = "||=> Running command ".colorize(:blue) + "`#{cmd.colorize(:white)}`"
         puts msg
       end

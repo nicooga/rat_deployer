@@ -24,7 +24,7 @@ Reason:
     end
 
     desc "compose ARGS...", "runs docker-compose command with default flags"
-    def compose(cmd, *cmd_flags)
+    def compose(cmd, *cmd_flags, silent: false)
       env          = RatDeployer::Config.env
       project_name = RatDeployer::Config.all.fetch('project_name')
 
@@ -38,7 +38,7 @@ Reason:
         flags.unshift(RatDeployer::Config.remote_machine_flags)
       end
 
-      cmd = run "docker-compose #{flags.join(' ')} #{cmd} #{cmd_flags.join(" ")}"
+      cmd = run "docker-compose #{flags.join(' ')} #{cmd} #{cmd_flags.join(" ")}", silent: silent
       cmd.fetch(:output)
     end
 

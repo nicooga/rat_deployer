@@ -16,8 +16,9 @@ module RatDeployer
       props = get_deploy_properties
 
       slack_notifier.post(
+        text: title,
         attachments: [{
-          title:  title,
+          title:  'Deploy details',
           fields: get_deploy_properties.map do |k,v|
             {
               title: k.to_s.titleize,
@@ -41,7 +42,7 @@ module RatDeployer
         begin
           Slack::Notifier.new(
             webhook_url,
-            channel: '#general',
+            channel: '#alerts',
             username: 'rat-deployer'
           )
         end
@@ -54,7 +55,7 @@ module RatDeployer
     def self.get_deploy_properties
       require 'socket'
 
-      docker_config = YAML.load(RatDeployer::Cli.new.compose('config'))
+      docker_config = YAML.load(RatDeployer::Cli.new.compose('config', silent: true))
       images = docker_config['services'].map { |s,c| c['image'] }.uniq.sort
 
       {
