@@ -8,11 +8,18 @@ module RatDeployer
     include RatDeployer::Command
 
     desc "deploy", "deploys current environment"
-    def deploy
+    def deploy(*services)
       RatDeployer::Notifier.notify_deploy_start
 
-      RatDeployer::Cli.new.compose('pull')
-      RatDeployer::Cli.new.compose('up -d')
+
+      if services.any?
+        services_str = services.join(' ')
+        RatDeployer::Cli.new.compose("pull #{services_str}")
+        RatDeployer::Cli.new.compose("up -d --no-deps --force-recreate #{services_str}")
+      else
+        RatDeployer::Cli.new.compose('pull')
+        RatDeployer::Cli.new.compose('up -d')
+      end
 
       RatDeployer::Notifier.notify_deploy_end
     rescue Exception => e
