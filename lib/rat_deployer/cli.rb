@@ -11,7 +11,6 @@ module RatDeployer
     def deploy(*services)
       RatDeployer::Notifier.notify_deploy_start
 
-
       if services.any?
         services_str = services.join(' ')
         RatDeployer::Cli.new.compose("pull #{services_str}")
@@ -28,6 +27,7 @@ Failed deploy on #{ENV.fetch('RAT_ENV')}"
 Reason:
   #{e.message}
       STR
+      raise e
     end
 
     desc "compose ARGS...", "runs docker-compose command with default flags"
