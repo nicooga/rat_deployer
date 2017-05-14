@@ -1,4 +1,5 @@
 require 'thor'
+require 'fileutils'
 
 require 'rat_deployer/command'
 require 'rat_deployer/notifier'
@@ -6,6 +7,20 @@ require 'rat_deployer/notifier'
 module RatDeployer
   class Cli < Thor
     include RatDeployer::Command
+
+    "new", "creates a barebones rat proyect"
+    def new(name)
+      %w[
+        rat_config.rb
+        config/default.yml
+        config/staging.yml
+        config/production.yml
+      ].each do |file|
+        FileUtils.mkdir_p "#{name}/#{file}"
+      end
+    rescue Exception
+      FileUtils.remove_dir name
+    end
 
     desc "deploy", "deploys current environment"
     def deploy(*services)

@@ -11,78 +11,71 @@ It is not very flexible and it is **untested**. I wrote this to avoid running a 
 
 I named it rat because it is a rather little and ugly ball of code, but it does the job for now.
 
-## Why need yet another CLI??
-My deploy process involves building and pushing a couple of images from my local computer, then connecting to the remote host, pulling the updated images and recreating the affected containers. This means running a bunch of commands that may take a lot of time to complete. I built rat to automate this process. 
+## Features
+Rat deployer adds a thin layer of abstraction over docker-compose to make commands more DRY.
+Main features it adds are:
+
+  - Enviromental overrides using multiple compose files
+  - Easier remote usage by linking environments to machines
+  - Slack notifier
 
 ## Installation
 
-    $ gem install rat_deployer
+~~~bash
+$ gem install rat_deployer
+~~~
 
-## Usage
-Rat searchs for a file called `rat_config.yml` in the working dir. This file describes some global variables and environment specific variables.
+## Configuration
+Rat searches for a file called `rat_config.yml` in the working dir. The options are:
+
+- **project_name**: together with the environment, is part of the prefix passed to the `--project` option for `docker-compose`
+- **environments**: holds environemntal config
+  - **[*env*]**: parametric environment name
+    - **machine**: configuration for remote usage. Links environment to a remote host. All paths can be relative to `rat_config.yml` file
+      - **host**: IP for the remote machine
+      - **ca_cert**: path to CA certificate
+      - **cert**: path to SSL certificate used
+      - **key**: path to SSL certificate key
 
 Example config file:
 
 ~~~yaml
 project_name: myapp
 
-images:
-  'myapp/web:production':
-    source: web # The name of the folder inside ./sources
-    git:
-      url: git@gitlab.com:myapp_developers/myapp.git
-
-  'myapp/web:staging':
-    source: web
-    git:
-      url: git@gitlab.com:myapp_developers/myapp.git
-      branch: staging
-
-  'myapp/nginx':
-    source: nginx
-
 environments:
-  production:
-    machine: myapp-production
   staging:
-    machine: myapp-staging
-
+    machine:
+      host:    tcp://107.170.36.78:2376
+      ca_cert: certs/ca.pem
+      cert:    certs/cert.pem
+      key:     certs/key.pem
 ~~~
 
-This is what my dir structure looks like:
+## Env variable configuration
+Rat most used options are set via environent variables to avoid having to type them all the time.
+
+- **RAT_ENV**: current enviroment.
+- **RAT_REMOTE**: whether or not to execute commands on remote host. Acceptable values are `true` and `false`. Defaults to `true`.
+
+I recommend to export them if you are going to work on a environment for a long time:
 
 ~~~bash
-├── config # required
-│   ├── default.yml
-│   ├── development.yml
-│   ├── production.yml
-│   └── staging.yml
-├── env # optional
-│   ├── development.env
-│   ├── production.env
-│   └── staging.env
-├── sources # Here go image sources. You can either manage this by hand or use rat to specify git sources
-│   ├── nginx
-│   └── web
-└── rat_config.yml
+$ export RAT_ENV=production RAT_REMOTE=false
 ~~~
 
-Then to deploy:
+## Usage
 
-~~~bash
-$ RAT_ENV=staging rat deploy # to rebuild all images for which config is found in rat_config.yml
-$ # or
-$ RAT_ENV=staging rat deploy myapp/web:staging  # for an specific image
+- `rat compose cmd`: proxies command to docker-compose adding flags `-f config/default.yml -f config/<env>.yml -p <prefix>`. If `RAT_REMOTE` is `true` adds flags for running on remote host.
+- `rat deploy [services]`: just an alias for `rat compose pull [services] && rat compose up -d [services]`.
+- `rat docker cmd`: proxies command to docker-compose adding flags for remote host ff `RAT_REMOTE` is `true`.
+
+Example usage:
+
+~~~base
+$ export RAT_ENV=staging
+$ rat compose up -d
+||=> Running command `docker-compose -f config/default.yml -f config/staging.yml -p cognituz_staging up -d`
 ~~~
-
-`rat deploy` will build and push the given images, connect to the remote machine, pull the new images, and recreate the affected containers. Other useful commands explained in the next section.
-
-## Commands
-  - `rat compose [CMD] [FLAGS...]`: simply runs given `docker-compose` command, but appends a couple of flags by convention: `-f config/default.yml -f config/$RAT_ENV.yml -p ${PROYECT_NAME}_$RAT_ENV`. This means you shoud put common docker-compose settings in config/default.yml and env specific config in config/<current_env>.yml.
-  - `rat images update [IMAGES...]`: alias for `rat images build [IMAGES...] && rat images push [IMAGES...]`
-  - `rat images build [IMAGES...]`: builds given images. If source for an image is not present in the path specified in the config, rat will try to clone if there is git sources configured.
-  - `rat images push [IMAGES...]`: pushes given images
-  - `rat deploy [IMAGES...]`: called with no arguments will `rat images update` all images and `rat compose pull && rat compose up -d` within the specified remote machine for the env. 
 
 ## Development
 
