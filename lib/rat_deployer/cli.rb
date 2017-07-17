@@ -8,31 +8,17 @@ module RatDeployer
   class Cli < Thor
     include RatDeployer::Command
 
-    "new", "creates a barebones rat proyect"
-    def new(name)
-      %w[
-        rat_config.rb
-        config/default.yml
-        config/staging.yml
-        config/production.yml
-      ].each do |file|
-        FileUtils.mkdir_p "#{name}/#{file}"
-      end
-    rescue Exception
-      FileUtils.remove_dir name
-    end
-
     desc "deploy", "deploys current environment"
     def deploy(*services)
       RatDeployer::Notifier.notify_deploy_start
 
       if services.any?
         services_str = services.join(' ')
-        RatDeployer::Cli.new.compose("pull #{services_str}")
-        RatDeployer::Cli.new.compose("up -d --no-deps --force-recreate #{services_str}")
+        compose("pull #{services_str}")
+        compose("up -d --no-deps --force-recreate #{services_str}")
       else
-        RatDeployer::Cli.new.compose('pull')
-        RatDeployer::Cli.new.compose('up -d')
+        compose('pull')
+        compose('up -d')
       end
 
       RatDeployer::Notifier.notify_deploy_end

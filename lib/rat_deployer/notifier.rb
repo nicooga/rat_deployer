@@ -14,6 +14,14 @@ module RatDeployer
       notify_deploy "Ended deploy on #{ENV.fetch('RAT_ENV')}"
     end
 
+    def self.notify(msg)
+      return unless webhook_url
+      return unless webhook_url
+      self.slack_notifier.ping msg
+    end
+
+    private
+
     def self.notify_deploy(title)
       return unless webhook_url
       props = get_deploy_properties
@@ -32,14 +40,6 @@ module RatDeployer
         }]
       )
     end
-
-    def self.notify(msg)
-      return unless webhook_url
-      return unless webhook_url
-      self.slack_notifier.ping msg
-    end
-
-    private
 
     def self.slack_notifier
       return unless webhook_url
