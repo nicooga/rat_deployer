@@ -60,4 +60,22 @@ describe '`compose` command' do
       )
     end
   end
+
+  context 'when using custom config files' do
+    it 'should use the config files especified in rat_config.yml' do
+      run_cmd('RAT_ENV=testing rat compose up -d')
+
+      expect(proxied_cmds.length).to eq 1
+
+      expect(proxied_cmd).to eq(
+        %w[
+          docker-compose
+          -f config/production.yml
+          -f config/testing.yml
+          -p dummy_app_testing
+          up -d
+        ].join(' ')
+      )
+    end
+  end
 end

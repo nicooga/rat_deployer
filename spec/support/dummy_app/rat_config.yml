@@ -7,3 +7,8 @@ environments:
       ca_cert: 'certs/staging/ca.pem'
       cert:    'certs/staging/cert.pem'
       key:     'certs/staging/key.pem'
+
+  testing:
+    config_files:
+      - config/production.yml
+      - config/testing.yml

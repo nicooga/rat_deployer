@@ -11,7 +11,7 @@ module RatDeployer
     def self.for_env(e = env)
       environmental = all.fetch('environments', {})
       default_conf = environmental.fetch('default', {})
-      env_conf     = environmental.fetch(e)
+      env_conf     = environmental.fetch(e, {})
 
       default_conf.deep_merge(env_conf)
     end

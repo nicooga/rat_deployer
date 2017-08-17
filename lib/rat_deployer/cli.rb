@@ -67,9 +67,14 @@ module RatDeployer
       env          = RatDeployer::Config.env
       project_name = RatDeployer::Config.all.fetch('project_name')
 
+      config_files =
+        RatDeployer::Config.for_env['config_files'] || %W[
+          config/default.yml
+          config/#{env}.yml
+        ]
+
       flags = [
-        '-f config/default.yml',
-        "-f config/#{env}.yml",
+        config_files.map { |cf| "-f #{cf}" },
         "-p #{project_name}_#{env}"
       ]
 
