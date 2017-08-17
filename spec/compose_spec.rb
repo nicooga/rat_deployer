@@ -1,3 +1,4 @@
+# rubocop:disable Metrics/BlockLength
 require 'spec_helper'
 
 describe '`compose` command' do
@@ -8,14 +9,14 @@ describe '`compose` command' do
       expect(proxied_cmds.length).to eq 1
 
       expect(proxied_cmd).to eq(
-         %w[
-           docker-compose
-           -f config/default.yml
-           -f config/production.yml
-           -p dummy_app_production
-            up -d
-         ].join(' ')
-       )
+        %w[
+          docker-compose
+          -f config/default.yml
+          -f config/production.yml
+          -p dummy_app_production
+          up -d
+        ].join(' ')
+      )
     end
   end
 
@@ -49,14 +50,14 @@ describe '`compose` command' do
       expect(proxied_cmds.length).to eq 1
 
       expect(proxied_cmd).to eq(
-         %w[
-           docker-compose
-           -f config/default.yml
-           -f config/default.yml
-           -p dummy_app_default
-            up -d
-         ].join(' ')
-       )
+        %w[
+          docker-compose
+          -f config/default.yml
+          -f config/default.yml
+          -p dummy_app_default
+          up -d
+        ].join(' ')
+      )
     end
   end
 end

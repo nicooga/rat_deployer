@@ -2,7 +2,7 @@ require 'open3'
 
 module Helpers
   HISTORY_FILE =
-    File.expand_path 'spec/support/dummy_binaries/.history', PROJECT_ROOT
+    File.expand_path 'spec/support/dummy_binaries/.history', ROOT
 
   def run_cmd(cmd)
     Dir.chdir DUMMY_APP_PATH

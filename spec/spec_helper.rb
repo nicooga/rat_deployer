@@ -1,3 +1,4 @@
+# rubocop:disable Style/BlockComments
 require 'simplecov'
 SimpleCov.start
 
@@ -16,14 +17,14 @@ SimpleCov.start
 # it.
 #
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
-PROJECT_ROOT       = File.expand_path '..', File.dirname(__FILE__)
-BINARIES_DIR       = File.expand_path 'bin', PROJECT_ROOT
-DUMMY_BINARIES_DIR = File.expand_path 'spec/support/dummy_binaries', PROJECT_ROOT
-DUMMY_APP_PATH     = File.expand_path 'spec/support/dummy_app', PROJECT_ROOT
+ROOT               = File.expand_path '..', File.dirname(__FILE__)
+BINARIES_DIR       = File.expand_path 'bin', ROOT
+DUMMY_BINARIES_DIR = File.expand_path 'spec/support/dummy_binaries', ROOT
+DUMMY_APP_PATH     = File.expand_path 'spec/support/dummy_app', ROOT
 
 require 'support/helpers'
 
-lib = File.expand_path('../lib', PROJECT_ROOT)
+lib = File.expand_path('../lib', ROOT)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 ENV['PATH'] = "#{BINARIES_DIR}:#{DUMMY_BINARIES_DIR}:#{ENV.fetch('PATH')}"
 

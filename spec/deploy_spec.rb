@@ -1,3 +1,4 @@
+# rubocop:disable Metrics/BlockLength
 require 'spec_helper'
 
 describe '`compose` command' do
@@ -8,23 +9,23 @@ describe '`compose` command' do
       expect(proxied_cmds.length).to be(2)
 
       expect(proxied_cmds.first) .to eq(
-         %w|
-           docker-compose
-           -f config/default.yml
-           -f config/default.yml
-           -p dummy_app_default
-           pull
-         |.join(' ')
-       )
+        %w[
+          docker-compose
+          -f config/default.yml
+          -f config/default.yml
+          -p dummy_app_default
+          pull
+        ].join(' ')
+      )
 
       expect(proxied_cmds[1]) .to eq(
-         %w|
-           docker-compose
-           -f config/default.yml
-           -f config/default.yml
-           -p dummy_app_default
-           up -d
-         |.join(' ')
+        %w[
+          docker-compose
+          -f config/default.yml
+          -f config/default.yml
+          -p dummy_app_default
+          up -d
+        ].join(' ')
       )
     end
   end
@@ -46,8 +47,17 @@ describe '`compose` command' do
         -p dummy_app_staging
       ].join(' ')
 
-      expect(proxied_cmds.first).to eq("docker-compose #{flags} pull service1 service2")
-      expect(proxied_cmds[1]).to eq("docker-compose #{flags} up -d --no-deps --force-recreate service1 service2")
+      expect(proxied_cmds.first)
+        .to eq("docker-compose #{flags} pull service1 service2")
+
+      expect(proxied_cmds[1]).to eq(
+        %W[
+          docker-compose #{flags}
+          up -d --no-deps
+          --force-recreate
+          service1 service2
+        ].join(' ')
+      )
     end
   end
 end

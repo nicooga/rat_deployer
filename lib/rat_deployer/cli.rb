@@ -1,17 +1,58 @@
 require 'thor'
 require 'fileutils'
+require 'active_support/core_ext/string/strip'
 
 require 'rat_deployer/command'
 require 'rat_deployer/notifier'
 
 module RatDeployer
+  # The main Thor subclass
   class Cli < Thor
     include RatDeployer::Command
 
-    desc "deploy", "deploys current environment"
+    desc 'deploy', 'deploys current environment'
     def deploy(*services)
       RatDeployer::Notifier.notify_deploy_start
+      do_deploy(*services)
+      RatDeployer::Notifier.notify_deploy_end
+    rescue StandardError => e
+      RatDeployer::Notifier.notify <<-STR.strip_heredoc
+        Failed deploy on #{RatDeployer::Config.env}
+        Reason:
+          #{e.message}
+      STR
+      raise e
+    end
 
+    desc 'compose ARGS...', 'runs docker-compose command with default flags'
+    def compose(cmd, *cmd_flags, silent: false)
+      run(
+        [
+          'docker-compose',
+          compose_flags,
+          cmd,
+          cmd_flags
+        ].flatten.join(' '),
+        silent: silent
+      )
+        .fetch(:output)
+    end
+
+    desc 'docker ARGS...', 'runs docker command with default flags'
+    def docker(cmd, *cmd_flags)
+      flags = []
+
+      if RatDeployer::Config.remote
+        flags.unshift(RatDeployer::Config.remote_machine_flags)
+      end
+
+      cmd = run "docker #{flags.join(' ')} #{cmd} #{cmd_flags.join(' ')}"
+      cmd.fetch(:output)
+    end
+
+    private
+
+    def do_deploy(*services)
       if services.any?
         services_str = services.join(' ')
         compose("pull #{services_str}")
@@ -20,24 +61,14 @@ module RatDeployer
         compose('pull')
         compose('up -d')
       end
-
-      RatDeployer::Notifier.notify_deploy_end
-    rescue Exception => e
-      RatDeployer::Notifier.notify <<-STR
-Failed deploy on #{RatDeployer::Config.env}"
-Reason:
-  #{e.message}
-      STR
-      raise e
     end
 
-    desc "compose ARGS...", "runs docker-compose command with default flags"
-    def compose(cmd, *cmd_flags, silent: false)
+    def compose_flags
       env          = RatDeployer::Config.env
       project_name = RatDeployer::Config.all.fetch('project_name')
 
       flags = [
-        "-f config/default.yml",
+        '-f config/default.yml',
         "-f config/#{env}.yml",
         "-p #{project_name}_#{env}"
       ]
@@ -46,23 +77,7 @@ Reason:
         flags.unshift(RatDeployer::Config.remote_machine_flags)
       end
 
-      cmd = run "docker-compose #{flags.join(' ')} #{cmd} #{cmd_flags.join(" ")}", silent: silent
-      cmd.fetch(:output)
-    end
-
-    desc "docker ARGS...", "runs docker command with default flags"
-    def docker(cmd, *cmd_flags)
-      env          = RatDeployer::Config.env
-      project_name = RatDeployer::Config.all.fetch('project_name')
-
-      flags = []
-
-      if RatDeployer::Config.remote
-        flags.unshift(RatDeployer::Config.remote_machine_flags)
-      end
-
-      cmd = run "docker #{flags.join(' ')} #{cmd} #{cmd_flags.join(" ")}"
-      cmd.fetch(:output)
+      flags
     end
   end
 end

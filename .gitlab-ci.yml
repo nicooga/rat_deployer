@@ -4,3 +4,8 @@ run_tests:
   script:
     - bundle install
     - bundle exec rspec
+
+run_linter:
+  state: test
+  script:
+    - rubocop -D

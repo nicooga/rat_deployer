@@ -3,6 +3,7 @@ require 'active_support/core_ext/string'
 require 'slack-notifier'
 
 module RatDeployer
+  # RatDeployer::Notifier handles notifications to slack
   module Notifier
     def self.notify_deploy_start
       return unless webhook_url
@@ -17,25 +18,23 @@ module RatDeployer
     def self.notify(msg)
       return unless webhook_url
       return unless webhook_url
-      self.slack_notifier.ping msg
+      slack_notifier.ping msg
     end
-
-    private
 
     def self.notify_deploy(title)
       return unless webhook_url
-      props = get_deploy_properties
+      props = deploy_properties
 
       slack_notifier.post(
         text: title,
         attachments: [{
           title:  'Deploy details',
-          fields: get_deploy_properties.map do |k,v|
+          fields: props.map do |k, v|
             {
               title: k.to_s.titleize,
               value: k == :images ? v.join(' · ') : v,
               short: k != :images
-           }
+            }
           end
         }]
       )
@@ -55,14 +54,15 @@ module RatDeployer
     end
 
     def self.webhook_url
-      @webhook_url ||= RatDeployer::Config.all["slack_webhook_url"]
+      @webhook_url ||= RatDeployer::Config.all['slack_webhook_url']
     end
 
-    def self.get_deploy_properties
+    def self.deploy_properties
       require 'socket'
 
-      docker_config = YAML.load(RatDeployer::Cli.new.compose('config', silent: true))
-      images = docker_config['services'].map { |s,c| c['image'] }.uniq.sort
+      compose_config = RatDeployer::Cli.new.compose('config', silent: true)
+      docker_config = YAML.safe_load(compose_config)
+      images = docker_config['services'].map { |_s, c| c['image'] }.uniq.sort
 
       {
         env:        RatDeployer::Config.env,
