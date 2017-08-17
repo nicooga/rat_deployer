@@ -1,7 +1,9 @@
+before_script:
+  - bundle install
+
 run_tests:
   stage: test
   script:
-    - bundle install
     - bundle exec rspec
 
 run_linter:
