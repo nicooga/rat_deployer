@@ -17,7 +17,7 @@ module RatDeployer
     def self.prompt_enabled?() ENV['RAT_PROMPT'] != "false" end
     def self.machine() for_env.fetch("machine") end
     def self.remote() ENV['RAT_REMOTE'] =~ /true|1|yes/ end
-    def self.env() ENV.fetch('RAT_ENV') end
+    def self.env() ENV['RAT_ENV'] || 'default' end
     def self.images() all.fetch('images', {}) end
 
     def self.remote_machine_flags

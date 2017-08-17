@@ -6,12 +6,12 @@ module RatDeployer
   module Notifier
     def self.notify_deploy_start
       return unless webhook_url
-      notify_deploy "Starting deploy on #{ENV.fetch('RAT_ENV')}"
+      notify_deploy "Starting deploy on #{RatDeployer::Config.env}"
     end
 
     def self.notify_deploy_end
       return unless webhook_url
-      notify_deploy "Ended deploy on #{ENV.fetch('RAT_ENV')}"
+      notify_deploy "Ended deploy on #{RatDeployer::Config.env}"
     end
 
     def self.notify(msg)
@@ -65,7 +65,7 @@ module RatDeployer
       images = docker_config['services'].map { |s,c| c['image'] }.uniq.sort
 
       {
-        env:        ENV.fetch('RAT_ENV'),
+        env:        RatDeployer::Config.env,
         user:       ENV.fetch('USER'),
         hostname:   Socket.gethostname,
         started_at: Time.now.to_s,

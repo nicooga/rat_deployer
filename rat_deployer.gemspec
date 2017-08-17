@@ -32,4 +32,7 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency "activesupport"
   spec.add_development_dependency "bundler", "~> 1.13"
   spec.add_development_dependency "rake", "~> 10.0"
+  spec.add_development_dependency "rspec", "~> 3.6.0"
+  spec.add_development_dependency "activesupport", "~> 5.1.3"
+  spec.add_development_dependency "pry", "~> 0.10.4"
 end

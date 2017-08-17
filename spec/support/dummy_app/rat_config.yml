@@ -1,0 +1,9 @@
+project_name: dummy_app
+
+environments:
+  staging:
+    machine:
+      host:    'tcp://123.123.123:1231'
+      ca_cert: 'certs/staging/ca.pem'
+      cert:    'certs/staging/cert.pem'
+      key:     'certs/staging/key.pem'

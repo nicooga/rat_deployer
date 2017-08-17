@@ -1,0 +1,2 @@
+#!/usr/bin/bash
+echo "docker $@" >> "${BASH_SOURCE%/*}/.history"

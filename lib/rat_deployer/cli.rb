@@ -24,7 +24,7 @@ module RatDeployer
       RatDeployer::Notifier.notify_deploy_end
     rescue Exception => e
       RatDeployer::Notifier.notify <<-STR
-Failed deploy on #{ENV.fetch('RAT_ENV')}"
+Failed deploy on #{RatDeployer::Config.env}"
 Reason:
   #{e.message}
       STR
