@@ -1,11 +1,10 @@
 run_tests:
   stage: test
-
   script:
     - bundle install
     - bundle exec rspec
 
 run_linter:
-  state: test
+  stage: test
   script:
     - rubocop -D
