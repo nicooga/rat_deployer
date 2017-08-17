@@ -1,3 +1,7 @@
+stages:
+  - test
+  - release
+
 before_script:
   - bundle install
 
@@ -10,3 +14,10 @@ run_linter:
   stage: test
   script:
     - bundle exec rubocop -D
+
+relase_to_rubygems:
+  state: release
+  only:
+    - /^v\d+\.\d+\.\d+$/
+  script:
+    - rake release
