@@ -9,4 +9,4 @@ run_tests:
 run_linter:
   stage: test
   script:
-    - rubocop -D
+    - bundle exec rubocop -D
