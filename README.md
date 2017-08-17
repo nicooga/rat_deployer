@@ -1,11 +1,14 @@
+[![build status](https://gitlab.alfred.yavende.com/dev_ops/rat_deployer/badges/master/build.svg)](https://gitlab.alfred.yavende.com/dev_ops/rat_deployer/commits/master)
+[![coverage report](https://gitlab.alfred.yavende.com/dev_ops/rat_deployer/badges/master/coverage.svg)](https://gitlab.alfred.yavende.com/dev_ops/rat_deployer/commits/master)
+
 # Rat
 
-Rat is a deploy tool for docker users. It implements a facade around 3 docker CLIs:
+Rat is a deploy tool for docker users. It implements a facade around 2 docker CLIs:
   - docker
   - docker-compose
-  - docker-machine
   
-It is not very flexible and it is **untested**. I wrote this to avoid running a bunch of time consuming commands in a row.
+It is not very flexible and it is ~~**untested**~~ lightly tested.
+I wrote this to avoid running a bunch of time consuming commands in a row.
 
 ![rat](http://mauveart.esy.es/img/rats/1_big.jpg)
 
@@ -15,7 +18,7 @@ I named it rat because it is a rather little and ugly ball of code, but it does 
 Rat deployer adds a thin layer of abstraction over docker-compose to make commands more DRY.
 Main features it adds are:
 
-  - Enviromental overrides using multiple compose files
+  - Enviromental overrides by using multiple compose files
   - Easier remote usage by linking environments to machines
   - Slack notifier
 
