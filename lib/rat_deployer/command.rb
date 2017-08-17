@@ -18,7 +18,7 @@ module RatDeployer
     def do_run(cmd, silent: false)
       output, status = '', 1
 
-      IO.popen(cmd) do |io|
+      IO.popen(ENV, cmd) do |io|
         while line = io.gets do
           puts line unless silent
           output << line
