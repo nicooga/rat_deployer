@@ -5,9 +5,9 @@ describe '`compose` command' do
     it 'should add config files for the current env' do
       run_cmd('RAT_ENV=production rat compose up -d')
 
-      expect(last_proxied_cmds.length).to eq 1
+      expect(proxied_cmds.length).to eq 1
 
-      expect(last_proxied_cmd).to eq(
+      expect(proxied_cmd).to eq(
          %w[
            docker-compose
            -f config/default.yml
@@ -23,9 +23,9 @@ describe '`compose` command' do
     it 'should add config flags for the current env and remote flags' do
       run_cmd('RAT_ENV=staging RAT_REMOTE=true rat compose up -d')
 
-      expect(last_proxied_cmds.length).to eq 1
+      expect(proxied_cmds.length).to eq 1
 
-      expect(last_proxied_cmd).to eq(
+      expect(proxied_cmd).to eq(
         %w[
           docker-compose
           --tlsverify
@@ -46,9 +46,9 @@ describe '`compose` command' do
     it 'should add config flags for the default env' do
       run_cmd('rat compose up -d')
 
-      expect(last_proxied_cmds.length).to eq 1
+      expect(proxied_cmds.length).to eq 1
 
-      expect(last_proxied_cmd).to eq(
+      expect(proxied_cmd).to eq(
          %w[
            docker-compose
            -f config/default.yml

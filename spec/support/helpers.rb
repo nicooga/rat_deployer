@@ -9,11 +9,11 @@ module Helpers
     `#{cmd}`
   end
 
-  def last_proxied_cmds
+  def proxied_cmds
     `tail #{HISTORY_FILE}`.chomp.split("\n")
   end
 
-  def last_proxied_cmd
+  def proxied_cmd
     `tail -n 1 #{HISTORY_FILE}`.chomp
   end
 

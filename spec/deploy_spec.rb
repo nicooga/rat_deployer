@@ -5,9 +5,9 @@ describe '`compose` command' do
     it 'should run `compose pull` and `compose up -d`' do
       run_cmd('rat deploy')
 
-      expect(last_proxied_cmds.length).to be(2)
+      expect(proxied_cmds.length).to be(2)
 
-      expect(last_proxied_cmds.first) .to eq(
+      expect(proxied_cmds.first) .to eq(
          %w|
            docker-compose
            -f config/default.yml
@@ -17,7 +17,7 @@ describe '`compose` command' do
          |.join(' ')
        )
 
-      expect(last_proxied_cmds[1]) .to eq(
+      expect(proxied_cmds[1]) .to eq(
          %w|
            docker-compose
            -f config/default.yml
@@ -33,7 +33,7 @@ describe '`compose` command' do
     it 'should run `compose pull` and `compose up -d` with passing flags' do
       run_cmd('RAT_ENV=staging RAT_REMOTE=true rat deploy service1 service2')
 
-      expect(last_proxied_cmds.length).to be(2)
+      expect(proxied_cmds.length).to be(2)
 
       flags = %w[
         --tlsverify
@@ -46,8 +46,8 @@ describe '`compose` command' do
         -p dummy_app_staging
       ].join(' ')
 
-      expect(last_proxied_cmds.first).to eq("docker-compose #{flags} pull service1 service2")
-      expect(last_proxied_cmds[1]).to eq("docker-compose #{flags} up -d --no-deps --force-recreate service1 service2")
+      expect(proxied_cmds.first).to eq("docker-compose #{flags} pull service1 service2")
+      expect(proxied_cmds[1]).to eq("docker-compose #{flags} up -d --no-deps --force-recreate service1 service2")
     end
   end
 end
