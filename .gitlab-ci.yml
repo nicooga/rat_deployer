@@ -15,7 +15,7 @@ run_linter:
   script:
     - bundle exec rubocop -D
 
-relase_to_rubygems:
+release_to_rubygems:
   stage: release
   only:
     - /^v\d+\.\d+\.\d+$/
