@@ -14,7 +14,7 @@ Gem::Specification.new do |spec|
   spec.description = 'A micro-framework to deploy dockerized apps'
   spec.homepage    = 'http://github.com/nicooga/rat_deployer'
   spec.license     = 'MIT'
-  spec.files       = Dir["{lib}/**/*.rb", "bin/*", "LICENSE", "*.md"]
+  spec.files       = Dir["{lib}/**/*.rb", "bin/*", "LICENSE", "*.md", 'vendor/**/*']
   spec.executables   = ['rat']
   spec.require_paths = ['lib']
   spec.add_runtime_dependency 'thor', '~> 0.19.1'
