@@ -23,4 +23,5 @@ release_to_rubygems:
     - mkdir -p ~/.gem
     - touch ~/.gem/credentials
     - 'echo -e "---\n:rubygems_api_key: d58a6215a60447af9e883a5ebbb6e7eb" > ~/.gem/credentials'
+    - chown $USER ~/.gem/credentials
     - rake release
