@@ -20,6 +20,6 @@ release_to_rubygems:
   only:
     - /^v\d+\.\d+\.\d+$/
   script:
-    - mkdir -p /.gem
-    - echo -e "---\n:rubygems_api_key: d58a6215a60447af9e883a5ebbb6e7eb" > /.gem/credentials
+    - mkdir -p ~/.gem
+    - 'echo -e "---\n:rubygems_api_key: d58a6215a60447af9e883a5ebbb6e7eb" > /.gem/credentials'
     - rake release
