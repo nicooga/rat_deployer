@@ -64,8 +64,7 @@ module RatDeployer
     end
 
     def compose_flags
-      env          = RatDeployer::Config.env
-      project_name = RatDeployer::Config.all.fetch('project_name')
+      env = RatDeployer::Config.env
 
       config_files =
         RatDeployer::Config.for_env['config_files'] || %W[
@@ -73,9 +72,11 @@ module RatDeployer
           config/#{env}.yml
         ]
 
+      puts RatDeployer::Config.project_name
+
       flags = [
         config_files.map { |cf| "-f #{cf}" },
-        "-p #{project_name}_#{env}"
+        "-p #{RatDeployer::Config.project_name}"
       ]
 
       if RatDeployer::Config.remote

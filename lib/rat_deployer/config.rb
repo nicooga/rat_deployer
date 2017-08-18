@@ -32,6 +32,11 @@ module RatDeployer
       all.fetch('images', {})
     end
 
+    def self.project_name
+      (for_env['project_name'] || all.fetch('project_name'))
+      .gsub(/\{env\}/, env)
+    end
+
     def self.remote_machine_flags
       machine = for_env.fetch('machine')
 

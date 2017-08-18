@@ -1,4 +1,4 @@
-project_name: dummy_app
+project_name: dummy_app_{env}
 
 environments:
   staging:
@@ -9,6 +9,7 @@ environments:
       key:     'certs/staging/key.pem'
 
   testing:
+    project_name: dummy_app_staging
     config_files:
       - config/production.yml
       - config/testing.yml
